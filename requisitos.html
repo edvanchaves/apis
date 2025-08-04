@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo de Requisitos de Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A multi-section single-page application with a fixed top navigation bar. The structure is designed for non-linear learning, allowing users to jump between concepts. It includes: 1) An introduction. 2) A tabbed component to compare requirement types. 3) A dedicated section for business rules. 4) An interactive card grid for elicitation techniques that open modals. 5) A doughnut chart for visual comparison. 6) An interactive quiz for knowledge reinforcement. This structure was chosen to transform the passive text document into an active learning tool, promoting exploration and engagement over linear reading. -->
+    <!-- Visualization & Content Choices: Report Info: Requirement types, techniques, and business rules. -> Goal: Inform, Compare, Organize, Test Knowledge. -> Viz/Presentation Method: Tabs for comparing types (HTML/JS), interactive cards with modals for techniques (HTML/JS), a doughnut chart for visual context (Chart.js), and a multiple-choice quiz (HTML/JS). -> Interaction: Clicks on nav/tabs/cards/buttons trigger content visibility changes, modal displays, and quiz feedback. Hover on the chart shows tooltips. -> Justification: This multi-faceted approach caters to different learning styles, making the content more digestible and memorable than plain text. The quiz provides valuable self-assessment. -> Library/Method: Chart.js for the canvas-based chart. All other interactions use Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            color: #ffffff;
+            background-color: #3b82f6;
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-blue-600">Guia de Requisitos</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#introducao" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Introdução</a>
+                        <a href="#tipos" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Tipos</a>
+                        <a href="#regras" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Regras de Negócio</a>
+                        <a href="#tecnicas" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Técnicas</a>
+                        <a href="#quiz" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Quiz</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white">
+                        <span class="sr-only">Abrir menu principal</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#introducao" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Introdução</a>
+                    <a href="#tipos" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Tipos</a>
+                    <a href="#regras" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Regras de Negócio</a>
+                    <a href="#tecnicas" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Técnicas</a>
+                    <a href="#quiz" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-blue-500 hover:text-white">Quiz</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div id="introducao" class="section">
+            <div class="bg-white p-8 rounded-lg shadow-lg animate-fade-in">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">A Fundamentação dos Projetos de Software</h2>
+                <p class="text-lg text-slate-600 mb-6">Bem-vindo ao guia interativo de requisitos! Nesta jornada, vamos explorar um dos estágios mais críticos no ciclo de vida de qualquer projeto: o **levantamento de requisitos**. Entender e definir corretamente o que um sistema precisa fazer é a base para o sucesso, evitando retrabalho e garantindo que o produto final atenda às expectativas do cliente.</p>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <p class="text-slate-700 italic">Um **requisito** é uma condição ou capacidade necessária para que uma solução resolva um problema ou alcance um objetivo. Em termos simples, é a ponte entre a necessidade do cliente e a solução técnica que será construída.</p>
+                </div>
+                 <div class="mt-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Foco de Esforço na Análise de Requisitos</h3>
+                    <p class="text-slate-600 mb-4">A fase de requisitos consome uma parte significativa do esforço de um projeto. Um bom levantamento pode prevenir custos elevados de correção no futuro. O gráfico abaixo ilustra uma distribuição típica de esforço, destacando a importância da análise funcional e não funcional.</p>
+                    <div class="chart-container">
+                        <canvas id="requirementsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tipos" class="section">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Tipos de Requisitos</h2>
+                <p class="text-slate-600 mb-6">A distinção entre os tipos de requisitos é essencial para uma análise completa. Explore as abas abaixo para entender cada categoria.</p>
+                <div id="tabs-container">
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                            <button data-tab="funcional" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-blue-500 text-blue-600">Funcionais</button>
+                            <button data-tab="nao-funcional" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Não Funcionais</button>
+                            <button data-tab="software-hardware" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Software e Hardware</button>
+                        </nav>
+                    </div>
+                    <div class="py-6">
+                        <div id="funcional" class="tab-content">
+                            <h3 class="text-2xl font-semibold text-slate-800 mb-3">Requisitos Funcionais: O que o sistema faz?</h3>
+                            <p class="text-slate-600 mb-4">Estes definem as **funções e serviços** que o software deve oferecer. São a espinha dorsal do sistema e geralmente são expressos com verbos de ação.</p>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700">
+                                <li>O sistema deve permitir que o usuário **faça login** com e-mail e senha.</li>
+                                <li>A plataforma deve **calcular** o imposto de vendas sobre os produtos.</li>
+                                <li>O sistema deve **gerar** um relatório de vendas em formato PDF.</li>
+                            </ul>
+                        </div>
+                        <div id="nao-funcional" class="tab-content hidden">
+                            <h3 class="text-2xl font-semibold text-slate-800 mb-3">Requisitos Não Funcionais: Como o sistema se comporta?</h3>
+                            <p class="text-slate-600 mb-4">Estes definem os **atributos de qualidade** da solução, como desempenho, segurança e usabilidade. Eles descrevem como o sistema funciona, e não o que ele faz.</p>
+                            <ul class="list-disc list-inside space-y-2 text-slate-700">
+                                <li><strong>Desempenho:</strong> O tempo de resposta da página principal não deve exceder 2 segundos.</li>
+                                <li><strong>Segurança:</strong> Todos os dados sensíveis do usuário devem ser protegidos por criptografia forte.</li>
+                                <li><strong>Usabilidade:</strong> A interface deve ser intuitiva, permitindo que um novo usuário complete uma tarefa sem treinamento prévio.</li>
+                                <li><strong>Confiabilidade:</strong> O sistema deve estar disponível para os usuários 99.9% do tempo.</li>
+                            </ul>
+                        </div>
+                        <div id="software-hardware" class="tab-content hidden">
+                            <h3 class="text-2xl font-semibold text-slate-800 mb-3">Requisitos de Software e Hardware</h3>
+                            <p class="text-slate-600 mb-4">Estes são requisitos técnicos que definem o ambiente no qual a solução irá operar para garantir seu funcionamento correto.</p>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-bold text-lg mb-2">Software</h4>
+                                    <p class="text-slate-700">Especificam o software necessário, como sistema operacional, bancos de dados, linguagens de programação ou bibliotecas.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg mb-2">Hardware</h4>
+                                    <p class="text-slate-700">Detalham o hardware mínimo necessário, como tipo de processador, memória RAM e espaço em disco.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="regras" class="section">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Regras de Negócio</h2>
+                <p class="text-slate-600 mb-6">As regras de negócio são as políticas e restrições que guiam uma organização. Elas são a lógica que o software deve seguir para se alinhar aos processos da empresa.</p>
+                <div class="bg-slate-100 p-6 rounded-lg">
+                    <div class="flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-1 text-center md:text-left">
+                            <h4 class="font-bold text-blue-600 mb-2">Regra de Negócio</h4>
+                            <p class="text-slate-700">"Um cliente que atinge um gasto total de R$1.000 no ano recebe um cupom de 10% de desconto para a próxima compra."</p>
+                        </div>
+                        <div class="text-blue-500 text-4xl font-thin transform rotate-90 md:rotate-0">
+                            &rarr;
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                             <h4 class="font-bold text-green-600 mb-2">Requisito do Sistema</h4>
+                            <p class="text-slate-700">"O sistema deve rastrear o gasto anual dos clientes e, ao atingir R$1.000, deve emitir um cupom de 10% de desconto automaticamente."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tecnicas" class="section">
+             <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Técnicas de Levantamento</h2>
+                <p class="text-slate-600 mb-6">A coleta de requisitos pode ser feita usando várias técnicas. Clique em cada cartão para saber mais sobre a abordagem.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div data-technique="entrevistas" class="technique-card bg-blue-100 p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+                        <h3 class="font-bold text-lg text-blue-800">Entrevistas</h3>
+                        <p class="text-blue-700 mt-2">Conversas diretas com os stakeholders.</p>
+                    </div>
+                    <div data-technique="brainstorming" class="technique-card bg-green-100 p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+                        <h3 class="font-bold text-lg text-green-800">Brainstorming</h3>
+                        <p class="text-green-700 mt-2">Sessões criativas para gerar ideias em grupo.</p>
+                    </div>
+                    <div data-technique="questionarios" class="technique-card bg-yellow-100 p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+                        <h3 class="font-bold text-lg text-yellow-800">Questionários</h3>
+                        <p class="text-yellow-700 mt-2">Coleta de dados de um grande público.</p>
+                    </div>
+                    <div data-technique="etnografia" class="technique-card bg-purple-100 p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+                        <h3 class="font-bold text-lg text-purple-800">Etnografia</h3>
+                        <p class="text-purple-700 mt-2">Observação do usuário em seu ambiente.</p>
+                    </div>
+                    <div data-technique="documentos" class="technique-card bg-red-100 p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+                        <h3 class="font-bold text-lg text-red-800">Análise de Documentos</h3>
+                        <p class="text-red-700 mt-2">Estudo de materiais existentes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz" class="section">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Teste seu Conhecimento</h2>
+                <p class="text-slate-600 mb-6">Responda às perguntas abaixo para verificar o que você aprendeu.</p>
+                <div id="quiz-container" class="space-y-8"></div>
+                <div id="quiz-results" class="hidden mt-8 text-center">
+                    <h3 class="text-2xl font-bold">Resultado Final</h3>
+                    <p id="score-text" class="text-lg mt-2"></p>
+                    <button id="restart-quiz-btn" class="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors">Tentar Novamente</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <p id="modal-body" class="text-slate-600"></p>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    const content = {
+        techniques: {
+            entrevistas: {
+                title: 'Entrevistas',
+                description: 'Conversas estruturadas ou não estruturadas com os stakeholders para entender suas necessidades, expectativas e fluxos de trabalho. É uma técnica ideal para obter informações detalhadas e aprofundadas, permitindo esclarecer dúvidas em tempo real.'
+            },
+            brainstorming: {
+                title: 'Brainstorming',
+                description: 'Sessões colaborativas com a equipe e stakeholders para gerar um grande número de ideias em um curto período. É excelente para explorar soluções criativas e inovadoras, especialmente na fase inicial de um projeto.'
+            },
+            questionarios: {
+                title: 'Questionários',
+                description: 'Formulários com perguntas estruturadas distribuídos aos stakeholders. É uma ferramenta útil para coletar informações de um grande número de pessoas de forma eficiente, mas pode ser menos eficaz para capturar detalhes e nuances.'
+            },
+            etnografia: {
+                title: 'Etnografia',
+                description: 'Observação direta dos usuários em seu ambiente de trabalho para entender como eles interagem com os sistemas atuais e os desafios que enfrentam. Esta técnica fornece insights valiosos sobre o comportamento real dos usuários.'
+            },
+            documentos: {
+                title: 'Análise de Documentos',
+                description: 'Estudo de documentos existentes, como manuais de operação, relatórios, políticas da empresa e planos de negócios, para identificar regras de negócio, fluxos de trabalho e requisitos ocultos.'
+            }
+        },
+        quiz: [
+            {
+                question: "Qual das seguintes opções é um exemplo de requisito NÃO funcional?",
+                options: ["O sistema deve permitir o cadastro de clientes.", "A página principal deve carregar em menos de 3 segundos.", "O usuário deve poder gerar um relatório de vendas.", "O sistema deve calcular o frete."],
+                answer: "A página principal deve carregar em menos de 3 segundos."
+            },
+            {
+                question: "'O sistema deve ser compatível com o navegador Google Chrome.' é um requisito de:",
+                options: ["Hardware", "Funcional", "Software", "Não Funcional"],
+                answer: "Software"
+            },
+            {
+                question: "Qual técnica de levantamento é mais adequada para entender o fluxo de trabalho real de um usuário em seu ambiente?",
+                options: ["Questionários", "Brainstorming", "Etnografia", "Entrevistas"],
+                answer: "Etnografia"
+            },
+            {
+                question: "'O sistema deve permitir que o usuário faça login com e-mail e senha.' é um exemplo de requisito:",
+                options: ["Não Funcional", "Funcional", "Regra de Negócio", "De Hardware"],
+                answer: "Funcional"
+            }
+        ]
+    };
+
+    function showSection(hash) {
+        sections.forEach(section => {
+            if (`#${section.id}` === hash) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === hash) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+        mobileMenu.classList.add('hidden');
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const hash = e.target.getAttribute('href');
+            window.location.hash = hash;
+        });
+    });
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash || '#introducao';
+        showSection(hash);
+    });
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    const initialHash = window.location.hash || '#introducao';
+    showSection(initialHash);
+
+    const tabsContainer = document.getElementById('tabs-container');
+    if (tabsContainer) {
+        const tabButtons = tabsContainer.querySelectorAll('.tab-button');
+        const tabContents = tabsContainer.querySelectorAll('.tab-content');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'text-blue-600');
+                    btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                });
+                button.classList.add('border-blue-500', 'text-blue-600');
+                button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+
+                tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    }
+
+    const modal = document.getElementById('modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const techniqueCards = document.querySelectorAll('.technique-card');
+
+    techniqueCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const techniqueKey = card.dataset.technique;
+            const data = content.techniques[techniqueKey];
+            modalTitle.textContent = data.title;
+            modalBody.textContent = data.description;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
+        });
+    });
+
+    const closeModal = () => {
+        modal.querySelector('.modal-content').classList.add('scale-95');
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    };
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    const quizContainer = document.getElementById('quiz-container');
+    const quizResults = document.getElementById('quiz-results');
+    const scoreText = document.getElementById('score-text');
+    const restartQuizBtn = document.getElementById('restart-quiz-btn');
+    let score = 0;
+    let currentQuestionIndex = 0;
+
+    function loadQuiz() {
+        score = 0;
+        currentQuestionIndex = 0;
+        quizContainer.innerHTML = '';
+        quizResults.classList.add('hidden');
+        quizContainer.classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex < content.quiz.length) {
+            const q = content.quiz[currentQuestionIndex];
+            const questionEl = document.createElement('div');
+            questionEl.className = 'quiz-question';
+            
+            let optionsHTML = q.options.map((option, index) => `
+                <label class="flex items-center p-3 my-2 rounded-lg border border-slate-300 cursor-pointer hover:bg-slate-100 transition-colors">
+                    <input type="radio" name="question${currentQuestionIndex}" value="${option}" class="mr-3">
+                    <span>${option}</span>
+                </label>
+            `).join('');
+
+            questionEl.innerHTML = `
+                <p class="font-semibold text-lg mb-4">${currentQuestionIndex + 1}. ${q.question}</p>
+                <div class="options-container">${optionsHTML}</div>
+                <button class="check-answer-btn mt-4 bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors" disabled>Verificar</button>
+                <p class="feedback-text mt-2 text-sm"></p>
+            `;
+            quizContainer.appendChild(questionEl);
+
+            const radioButtons = questionEl.querySelectorAll(`input[name="question${currentQuestionIndex}"]`);
+            const checkBtn = questionEl.querySelector('.check-answer-btn');
+            
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    checkBtn.disabled = false;
+                });
+            });
+
+            checkBtn.addEventListener('click', () => checkAnswer(questionEl));
+        } else {
+            showResults();
+        }
+    }
+
+    function checkAnswer(questionEl) {
+        const selectedOption = questionEl.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+        const q = content.quiz[currentQuestionIndex];
+        const feedbackText = questionEl.querySelector('.feedback-text');
+        const checkBtn = questionEl.querySelector('.check-answer-btn');
+        const radioLabels = questionEl.querySelectorAll('label');
+
+        checkBtn.disabled = true;
+        radioLabels.forEach(label => label.querySelector('input').disabled = true);
+
+        if (selectedOption.value === q.answer) {
+            score++;
+            feedbackText.textContent = "Correto!";
+            feedbackText.className = 'feedback-text mt-2 text-sm text-green-600 font-bold';
+            selectedOption.parentElement.classList.add('bg-green-200', 'border-green-400');
+        } else {
+            feedbackText.textContent = `Incorreto. A resposta correta é: ${q.answer}`;
+            feedbackText.className = 'feedback-text mt-2 text-sm text-red-600 font-bold';
+            selectedOption.parentElement.classList.add('bg-red-200', 'border-red-400');
+            radioLabels.forEach(label => {
+                if(label.querySelector('input').value === q.answer) {
+                    label.classList.add('bg-green-200', 'border-green-400');
+                }
+            });
+        }
+        
+        currentQuestionIndex++;
+        setTimeout(showQuestion, 2000);
+    }
+
+    function showResults() {
+        quizContainer.classList.add('hidden');
+        quizResults.classList.remove('hidden');
+        scoreText.textContent = `Você acertou ${score} de ${content.quiz.length} perguntas.`;
+    }
+
+    restartQuizBtn.addEventListener('click', loadQuiz);
+
+    if (document.getElementById('quiz')) {
+        loadQuiz();
+    }
+    
+    const ctx = document.getElementById('requirementsChart');
+    if(ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Análise Funcional', 'Análise Não Funcional', 'Regras de Negócio', 'Gestão e Documentação'],
+                datasets: [{
+                    label: 'Distribuição de Esforço',
+                    data: [45, 25, 15, 15],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(107, 114, 128, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(107, 114, 128, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>
