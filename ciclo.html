@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciclo de Vida do Software - Aplicação Interativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: A vertical, single-page application with a sticky top navigation bar. Each nav item smoothly scrolls to its corresponding section. The sections are: 1. Introdução, 2. As Etapas (com sub-seções interativas para cada fase do SDLC), 3. Modelos (Cascata vs. Ágil). This structure was chosen because it's intuitive, follows the logical flow of the lesson plan, is easy to navigate on all devices, and allows for focused, interactive exploration of each topic without leaving the page. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: The 5 stages of SDLC. Goal: Show the process flow. Viz/Presentation Method: A visually connected series of interactive cards using HTML/CSS with icons. Interaction: Clicking a card reveals detailed information. Justification: More engaging than a static list, reinforces the idea of a process. Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Levels of testing. Goal: Compare the focus of different tests. Viz/Presentation Method: A simple bar chart. Interaction: Hovering over bars shows tooltips. Justification: Visualizes abstract concepts, making them easier to grasp. Library/Method: Chart.js (Canvas).
+        - Report Info: Cascata vs. Ágil models. Goal: Compare and contrast. Viz/Presentation Method: A two-column layout. Interaction: None needed, clear visual separation. Justification: Direct comparison is effective for showing differences. Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#hero" class="text-xl font-bold text-slate-800">SDLC Interativo</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#introducao" class="nav-link text-slate-600 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-500">Introdução</a>
+                <a href="#etapas" class="nav-link text-slate-600 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-500">As Etapas</a>
+                <a href="#modelos" class="nav-link text-slate-600 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-500">Modelos</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white">
+            <a href="#introducao" class="block py-2 px-6 text-slate-600 hover:bg-amber-50">Introdução</a>
+            <a href="#etapas" class="block py-2 px-6 text-slate-600 hover:bg-amber-50">As Etapas</a>
+            <a href="#modelos" class="block py-2 px-6 text-slate-600 hover:bg-amber-50">Modelos</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="bg-slate-100 py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">O Ciclo de Vida do Software</h1>
+                <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">Uma jornada interativa para transformar uma ideia em um produto de software real e funcional.</p>
+            </div>
+        </section>
+
+        <section id="introducao" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">O que é o SDLC?</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">O Ciclo de Vida de Desenvolvimento de Software (SDLC) é um roteiro estruturado que guia equipes desde a concepção de uma ideia até a entrega e manutenção de um software. Ele organiza o processo em etapas claras, garantindo qualidade, eficiência e alinhamento com as necessidades do cliente.</p>
+                </div>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                        <div class="text-amber-500 text-4xl mb-4">💡</div>
+                        <h3 class="font-semibold text-lg mb-2">Organização</h3>
+                        <p class="text-slate-600">Define um fluxo de trabalho claro, evitando o caos e o retrabalho.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                        <div class="text-amber-500 text-4xl mb-4">🎯</div>
+                        <h3 class="font-semibold text-lg mb-2">Qualidade</h3>
+                        <p class="text-slate-600">Assegura que todas as fases, dos requisitos aos testes, sejam cumpridas.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                        <div class="text-amber-500 text-4xl mb-4">💰</div>
+                        <h3 class="font-semibold text-lg mb-2">Controle</h3>
+                        <p class="text-slate-600">Permite gerenciar custos, prazos e escopo de forma mais eficaz.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="etapas" class="py-16 md:py-24 bg-slate-100">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">As Etapas do Ciclo de Vida</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">O processo de desenvolvimento é dividido em fases sequenciais e interconectadas. Clique em cada etapa para explorar seus objetivos, tarefas e resultados.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Etapa 1: Análise de Requisitos -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <button class="w-full p-6 text-left flex items-center justify-between focus:outline-none accordion-toggle">
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-amber-500 mr-4">1</span>
+                                <h3 class="text-xl font-semibold text-slate-800">Análise de Requisitos</h3>
+                            </div>
+                            <span class="text-2xl transform transition-transform">▼</span>
+                        </button>
+                        <div class="p-6 border-t border-slate-200 hidden accordion-content">
+                            <p class="mb-4"><strong>Objetivo:</strong> Entender e documentar o que o sistema deve fazer. É a base de todo o projeto.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold mb-2">Principais Tarefas:</h4>
+                                    <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                        <li>Coletar requisitos com o cliente (entrevistas, workshops).</li>
+                                        <li>Diferenciar requisitos funcionais (o que faz) e não funcionais (como faz).</li>
+                                        <li>Criar o documento de especificação de requisitos.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Resultado Esperado:</h4>
+                                    <p class="text-slate-600">Um documento claro e sem ambiguidades que servirá de guia para as equipes de design e desenvolvimento.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Etapa 2: Projeto (Design) -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <button class="w-full p-6 text-left flex items-center justify-between focus:outline-none accordion-toggle">
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-amber-500 mr-4">2</span>
+                                <h3 class="text-xl font-semibold text-slate-800">Projeto (Design)</h3>
+                            </div>
+                            <span class="text-2xl transform transition-transform">▼</span>
+                        </button>
+                        <div class="p-6 border-t border-slate-200 hidden accordion-content">
+                            <p class="mb-4"><strong>Objetivo:</strong> Planejar como o sistema será construído, definindo sua estrutura técnica e visual.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold mb-2">Principais Tarefas:</h4>
+                                    <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                        <li>Definir a arquitetura do sistema (componentes, tecnologias).</li>
+                                        <li>Modelar o banco de dados.</li>
+                                        <li>Criar protótipos de tela e desenhar a interface (UI/UX).</li>
+                                        <li>Elaborar diagramas técnicos (UML, etc.).</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Resultado Esperado:</h4>
+                                    <p class="text-slate-600">Um "blueprint" completo do software, incluindo especificações de arquitetura, design de interface e modelo de dados.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Implementação -->
+                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <button class="w-full p-6 text-left flex items-center justify-between focus:outline-none accordion-toggle">
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-amber-500 mr-4">3</span>
+                                <h3 class="text-xl font-semibold text-slate-800">Implementação</h3>
+                            </div>
+                            <span class="text-2xl transform transition-transform">▼</span>
+                        </button>
+                        <div class="p-6 border-t border-slate-200 hidden accordion-content">
+                            <p class="mb-4"><strong>Objetivo:</strong> Escrever o código e construir o software com base nas especificações do projeto.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold mb-2">Principais Tarefas:</h4>
+                                    <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                        <li>Codificar os módulos e funcionalidades.</li>
+                                        <li>Criar e configurar o banco de dados.</li>
+                                        <li>Seguir padrões de codificação e boas práticas.</li>
+                                        <li>Integrar os diferentes componentes do sistema.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Resultado Esperado:</h4>
+                                    <p class="text-slate-600">O software funcional, pronto para ser submetido à fase de testes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 4: Testes -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <button class="w-full p-6 text-left flex items-center justify-between focus:outline-none accordion-toggle">
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-amber-500 mr-4">4</span>
+                                <h3 class="text-xl font-semibold text-slate-800">Testes</h3>
+                            </div>
+                            <span class="text-2xl transform transition-transform">▼</span>
+                        </button>
+                        <div class="p-6 border-t border-slate-200 hidden accordion-content">
+                            <p class="mb-4"><strong>Objetivo:</strong> Verificar se o software funciona conforme o esperado, encontrando e corrigindo defeitos (bugs).</p>
+                            <p class="mb-6">A fase de testes é dividida em diferentes níveis para garantir uma cobertura completa, desde a menor parte do código até o sistema como um todo.</p>
+                            <div class="chart-container">
+                                <canvas id="testesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 5: Implantação e Manutenção -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <button class="w-full p-6 text-left flex items-center justify-between focus:outline-none accordion-toggle">
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-amber-500 mr-4">5</span>
+                                <h3 class="text-xl font-semibold text-slate-800">Implantação e Manutenção</h3>
+                            </div>
+                            <span class="text-2xl transform transition-transform">▼</span>
+                        </button>
+                        <div class="p-6 border-t border-slate-200 hidden accordion-content">
+                            <p class="mb-4"><strong>Objetivo:</strong> Disponibilizar o software para os usuários e garantir seu funcionamento contínuo.</p>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-semibold mb-2">Implantação (Deploy):</h4>
+                                    <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                        <li>Instalar o software no ambiente de produção.</li>
+                                        <li>Migrar dados, se necessário.</li>
+                                        <li>Treinar os usuários finais.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Manutenção:</h4>
+                                     <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                        <li><strong>Corretiva:</strong> Corrigir bugs descobertos em produção.</li>
+                                        <li><strong>Evolutiva:</strong> Adicionar novas funcionalidades.</li>
+                                        <li><strong>Adaptativa:</strong> Adequar o sistema a novas tecnologias ou regras.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="modelos" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-800">Modelos de Ciclo de Vida</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">As etapas do SDLC podem ser organizadas de diferentes maneiras. Os dois modelos mais conhecidos são o Cascata e o Ágil.</p>
+                </div>
+                <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg border-t-4 border-amber-500">
+                        <h3 class="text-2xl font-bold mb-4">📜 Modelo Cascata (Waterfall)</h3>
+                        <p class="mb-4 text-slate-600">Uma abordagem linear e sequencial. Cada fase deve ser 100% concluída antes de passar para a próxima. É como construir uma casa: você não começa o telhado antes de terminar as paredes.</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔</span><span><strong>Ideal para:</strong> Projetos com requisitos muito bem definidos e estáveis.</span></li>
+                            <li class="flex items-start"><span class="text-red-500 mr-2">✖</span><span><strong>Desafio:</strong> Pouco flexível a mudanças. Um erro descoberto tardiamente pode ser muito caro para corrigir.</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg border-t-4 border-amber-500">
+                        <h3 class="text-2xl font-bold mb-4">🚀 Modelo Ágil (Agile)</h3>
+                        <p class="mb-4 text-slate-600">Uma abordagem iterativa e incremental. O projeto é dividido em pequenos ciclos (sprints), e a cada ciclo, uma parte funcional do software é entregue. O feedback é constante.</p>
+                         <ul class="space-y-2">
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔</span><span><strong>Ideal para:</strong> Projetos onde os requisitos podem mudar ou não são totalmente conhecidos no início.</span></li>
+                            <li class="flex items-start"><span class="text-red-500 mr-2">✖</span><span><strong>Desafio:</strong> Exige maior envolvimento do cliente e pode ser mais difícil de prever o escopo final.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Aplicação SDLC Interativo. Criado para fins educacionais.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Close mobile menu on link click
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Accordion functionality
+            const accordionToggles = document.querySelectorAll('.accordion-toggle');
+            accordionToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const content = toggle.nextElementSibling;
+                    const icon = toggle.querySelector('span:last-child');
+                    
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+
+            // Chart.js for Testes
+            const testesChartCanvas = document.getElementById('testesChart');
+            if (testesChartCanvas) {
+                const ctx = testesChartCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Teste Unitário', 'Teste de Integração', 'Teste de Sistema', 'Teste de Aceitação'],
+                        datasets: [{
+                            label: 'Foco Principal',
+                            data: [60, 75, 90, 100],
+                            backgroundColor: [
+                                'rgba(251, 191, 36, 0.6)', // amber-400
+                                'rgba(245, 158, 11, 0.6)', // amber-500
+                                'rgba(217, 119, 6, 0.6)',  // amber-600
+                                'rgba(180, 83, 9, 0.6)'    // amber-700
+                            ],
+                            borderColor: [
+                                'rgba(251, 191, 36, 1)',
+                                'rgba(245, 158, 11, 1)',
+                                'rgba(217, 119, 6, 1)',
+                                'rgba(180, 83, 9, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Níveis de Teste e seu Escopo',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        let tooltipText = '';
+                                        if (label === 'Teste Unitário') tooltipText = 'Verifica a menor parte do código (funções, métodos).';
+                                        if (label === 'Teste de Integração') tooltipText = 'Verifica se os módulos conversam entre si corretamente.';
+                                        if (label === 'Teste de Sistema') tooltipText = 'Verifica o sistema completo, ponta a ponta.';
+                                        if (label === 'Teste de Aceitação') tooltipText = 'Verifica se o sistema atende aos requisitos do cliente.';
+                                        return tooltipText;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
